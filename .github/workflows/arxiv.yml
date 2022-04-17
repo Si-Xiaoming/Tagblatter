@@ -29,3 +29,4 @@ jobs:
           git config user.email tj.29@qq.com
           git add .
           git commit -m "update"
+          git push
