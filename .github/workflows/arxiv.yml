@@ -1,0 +1,30 @@
+name: Get Arxiv Papers
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: 3.6
+
+      - name: install dependecies
+        run: |
+          python -m pip install --upgrade pip
+          pip install arxiv
+
+      - name: run script
+        run: |
+          python arxiv_daily.py
+      
+      - name: push markdown file
+        run: |
+          git config user.name wwd29
+          git config user.email tj.29@qq.com
+          git commit -am "update"
