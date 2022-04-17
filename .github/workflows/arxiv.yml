@@ -27,4 +27,5 @@ jobs:
         run: |
           git config user.name wwd29
           git config user.email tj.29@qq.com
-          git commit -am "update"
+          git add .
+          git commit -m "update"
