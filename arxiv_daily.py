@@ -1,6 +1,6 @@
+import datetime
 import json
 import os
-from datetime import datetime
 from time import sleep
 from urllib import request
 from urllib.error import URLError
@@ -34,30 +34,39 @@ def get_code_url(short_id):
 
 
 def main():
-    keywords = ['robust', 'clip']
-    cur_time = datetime.utcnow()
+    keywords = ['clip']
+    timedelta = 7
+    today = datetime.datetime.utcnow().date()
     for keyword in keywords:
         dirname = keyword.replace(' ', '_')
         os.makedirs(dirname, exist_ok=True)
         filename = os.path.join(dirname,
-                                f'{cur_time.year:04}-{cur_time.month:02}.md')
+                                f'{today.year:04}-{today.month:02}.md')
         if os.path.exists(filename):
             with open(filename, 'r') as fp:
                 lines = fp.readlines()
+            last_day = datetime.date(today.year, today.month,
+                                     int(lines[2].strip().split('-')[-1]))
         else:
-            lines = [f'# {keyword}\n', '\n']
+            last_day = today - datetime.timedelta(days=timedelta)
+            lines = [
+                f'# {keyword}\n', '\n',
+                f'## {last_day.month:02}-{last_day.day:02}\n', '\n'
+            ]
+
         with open(filename, 'w') as fp:
-            lines.insert(2, f'## {cur_time.month:02}-{cur_time.day:02}\n\n')
+            lines.insert(2, f'## {today.month:02}-{today.day:02}\n\n')
             search = arxiv.Search(query=keyword,
-                                  max_results=3,
                                   sort_by=arxiv.SortCriterion.SubmittedDate)
             for result in search.results():
+                if result.updated.date() <= last_day:
+                    break
                 code_url = get_code_url(result.get_short_id())
                 content = ''
                 content += f'### Title: {result.title}\n'
                 content += f'* Paper ID: {result.get_short_id()}\n'
                 content += f'* Paper URL: [{result.entry_id}]({result.entry_id})\n'
-                content += f'* Updated Date: {result.updated}\n'
+                content += f'* Updated Date: {result.updated.date()}\n'
                 if code_url is not None:
                     content += f'* Code URL: [{code_url}]({code_url})\n'
                 else:
