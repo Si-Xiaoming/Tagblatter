@@ -20,60 +20,59 @@ def get_json_data(url):
         try:
             res = request.urlopen(req)
             return json.loads(res.read().decode('utf-8'))
-        except URLError as e:
+        except URLError:
             sleep(1)
-    raise e
+    return None
 
 
 def get_code_url(short_id):
     base_url = 'https://arxiv.paperswithcode.com/api/v0/papers/'
     data = get_json_data(base_url + short_id)
-    if 'official' in data and data['official']:
+    if data and 'official' in data and data['official']:
         return data['official']['url']
     return None
 
 
 def main():
-    keywords = ['clip']
-    timedelta = 7
+    keywords = [
+        'secure', 'security', 'privacy', 'protect', 'defense', 'attack',
+        'robust', 'biometric', 'steal', 'extraction', 'membership infer',
+        'federate'
+    ]
+    timedelta = 3
     today = datetime.datetime.utcnow().date()
     for keyword in keywords:
         dirname = keyword.replace(' ', '_')
         os.makedirs(dirname, exist_ok=True)
-        filename = os.path.join(dirname,
-                                f'{today.year:04}-{today.month:02}.md')
-        if os.path.exists(filename):
-            with open(filename, 'r') as fp:
-                lines = fp.readlines()
-            last_day = datetime.date(today.year, today.month,
-                                     int(lines[2].strip().split('-')[-1]))
-        else:
-            last_day = today - datetime.timedelta(days=timedelta)
-            lines = [
-                f'# {keyword}\n', '\n',
-                f'## {last_day.month:02}-{last_day.day:02}\n', '\n'
-            ]
-
-        with open(filename, 'w') as fp:
-            lines.insert(2, f'## {today.month:02}-{today.day:02}\n\n')
+        exist_files = os.listdir(dirname)
+        last_day = today - datetime.timedelta(days=timedelta)
+        if len(exist_files) > 0:
+            year, month, day = map(int,
+                                   exist_files[-1].split('.')[0].split('-'))
+            temp_day = datetime.date(year, month, day)
+            if temp_day != today:
+                last_day = temp_day
+        filename = os.path.join(
+            dirname, f'{today.year:04}-{today.month:02}-{today.day:02}.md')
+        with open(filename, 'w', buffering=1) as fp:
+            fp.write(f'# {keyword}\n\n')
+            fp.write(f'## {today.month:02}-{today.day:02}\n\n')
             search = arxiv.Search(query=keyword,
                                   sort_by=arxiv.SortCriterion.SubmittedDate)
             for result in search.results():
                 if result.updated.date() <= last_day:
                     break
                 code_url = get_code_url(result.get_short_id())
-                content = ''
-                content += f'### Title: {result.title}\n'
-                content += f'* Paper ID: {result.get_short_id()}\n'
-                content += f'* Paper URL: [{result.entry_id}]({result.entry_id})\n'
-                content += f'* Updated Date: {result.updated.date()}\n'
+                fp.write(f'### Title: {result.title}\n')
+                fp.write(f'* Paper ID: {result.get_short_id()}\n')
+                fp.write(
+                    f'* Paper URL: [{result.entry_id}]({result.entry_id})\n')
+                fp.write(f'* Updated Date: {result.updated.date()}\n')
                 if code_url is not None:
-                    content += f'* Code URL: [{code_url}]({code_url})\n'
+                    fp.write(f'* Code URL: [{code_url}]({code_url})\n')
                 else:
-                    content += f'* Code URL: null\n'
-                content += f'* Summary: {result.summary}\n\n'
-                lines.insert(3, content)
-            fp.writelines(lines)
+                    fp.write(f'* Code URL: null\n')
+                fp.write(f'* Summary: {result.summary}\n\n')
 
 
 if __name__ == '__main__':
