@@ -17,8 +17,10 @@ def get_code_url(short_id):
     base_url = 'https://arxiv.paperswithcode.com/api/v0/repos-and-datasets/'
     time.sleep(random.random())
     data = requests.get(base_url + short_id, headers=headers).json()
-    if data and 'official' in data and data['official']:
-        return data['official']['url']
+    if data and 'code' in data:
+        if data['code'] and 'official' in data['code']:
+            if data['code']['official'] and 'url' in data['code']['official']:
+                return data['code']['official']['url']
     return None
 
 
