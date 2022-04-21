@@ -1,33 +1,22 @@
 import datetime
-import json
 import os
-from time import sleep
-from urllib import request
-from urllib.error import URLError
+import random
+import time
 
 import arxiv
+import requests
 
-
-def get_json_data(url):
-    headers = {
-        'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.22 Safari/537.36 SE 2.X MetaSr 1.0',
-        'Connection': 'close'
-    }
-    req = request.Request(url, headers=headers)
-    n_tries = 5
-    for _ in range(n_tries):
-        try:
-            res = request.urlopen(req)
-            return json.loads(res.read().decode('utf-8'))
-        except URLError:
-            sleep(1)
-    return None
+headers = {
+    'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.44',
+    'Connection': 'close'
+}
 
 
 def get_code_url(short_id):
-    base_url = 'https://arxiv.paperswithcode.com/api/v0/papers/'
-    data = get_json_data(base_url + short_id)
+    base_url = 'https://arxiv.paperswithcode.com/api/v0/repos-and-datasets/'
+    time.sleep(random.random())
+    data = requests.get(base_url + short_id, headers=headers).json()
     if data and 'official' in data and data['official']:
         return data['official']['url']
     return None
@@ -37,9 +26,9 @@ def main():
     keywords = [
         'secure', 'security', 'privacy', 'protect', 'defense', 'attack',
         'robust', 'biometric', 'steal', 'extraction', 'membership infer',
-        'federate'
+        'federate', 'watermark'
     ]
-    timedelta = 3
+    timedelta = 4
     today = datetime.datetime.utcnow().date()
     for keyword in keywords:
         dirname = keyword.replace(' ', '_')
@@ -49,19 +38,17 @@ def main():
         if len(exist_files) > 0:
             year, month, day = map(int,
                                    exist_files[-1].split('.')[0].split('-'))
-            temp_day = datetime.date(year, month, day)
-            if temp_day != today:
-                last_day = temp_day
-        filename = os.path.join(
-            dirname, f'{today.year:04}-{today.month:02}-{today.day:02}.md')
-        with open(filename, 'w', buffering=1) as fp:
-            fp.write(f'# {keyword}\n\n')
-            fp.write(f'## {today.month:02}-{today.day:02}\n\n')
-            search = arxiv.Search(query=keyword,
-                                  sort_by=arxiv.SortCriterion.SubmittedDate)
-            for result in search.results():
-                if result.updated.date() <= last_day:
-                    break
+            last_day = datetime.date(year, month, day)
+        search = arxiv.Search(query=keyword,
+                              sort_by=arxiv.SortCriterion.SubmittedDate)
+        for result in search.results():
+            if result.updated.date() <= last_day:
+                break
+            temp_day = result.updated.date()
+            filename = os.path.join(
+                dirname,
+                f'{temp_day.year:04}-{temp_day.month:02}-{temp_day.day:02}.md')
+            with open(filename, 'a+', buffering=1) as fp:
                 code_url = get_code_url(result.get_short_id())
                 fp.write(f'### Title: {result.title}\n')
                 fp.write(f'* Paper ID: {result.get_short_id()}\n')
