@@ -2,6 +2,8 @@ import datetime
 import os
 import random
 import time
+from turtle import pd
+from unicodedata import category
 
 import arxiv
 import requests
@@ -30,10 +32,10 @@ def main():
         'robust', 'biometric', 'steal', 'extraction', 'membership infer',
         'federate', 'fair', 'interpretability', 'exlainability', 'watermark'
     ]
-    timedelta = 2
+    categories = {'cs.CV', 'cs.CL', 'cs.CR', 'cs.AI', 'cs.LG'}
+    timedelta = 3
     today = datetime.datetime.utcnow().date()
     for keyword in keywords:
-        print(keyword)
         dirname = keyword.replace(' ', '_')
         os.makedirs(dirname, exist_ok=True)
         exist_files = os.listdir(dirname)
@@ -45,9 +47,14 @@ def main():
             last_day = min(last_day, datetime.date(year, month, day))
         search = arxiv.Search(query=keyword,
                               sort_by=arxiv.SortCriterion.SubmittedDate)
+        cnt = 0
         for result in search.results():
             if result.updated.date() <= last_day:
+                print(last_day, today, keyword, cnt)
                 break
+            if len(set(result.categories) & categories) == 0:
+                continue
+            cnt += 1
             temp_day = result.updated.date()
             filename = os.path.join(
                 dirname,
@@ -59,6 +66,7 @@ def main():
                 fp.write(
                     f'* Paper URL: [{result.entry_id}]({result.entry_id})\n')
                 fp.write(f'* Updated Date: {result.updated.date()}\n')
+                fp.write(f'* Categories: {result.categories}\n')
                 if code_url is not None:
                     fp.write(f'* Code URL: [{code_url}]({code_url})\n')
                 else:
