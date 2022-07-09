@@ -23,6 +23,7 @@ jobs:
 
       - name: run script
         run: |
+          git pull
           python arxiv_daily.py
       
       - name: push markdown file

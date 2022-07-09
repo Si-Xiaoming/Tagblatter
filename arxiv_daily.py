@@ -33,6 +33,7 @@ def main():
     timedelta = 2
     today = datetime.datetime.utcnow().date()
     for keyword in keywords:
+        print(keyword)
         dirname = keyword.replace(' ', '_')
         os.makedirs(dirname, exist_ok=True)
         exist_files = os.listdir(dirname)
