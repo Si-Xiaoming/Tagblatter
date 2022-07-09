@@ -28,9 +28,9 @@ def main():
     keywords = [
         'secure', 'security', 'privacy', 'protect', 'defense', 'attack',
         'robust', 'biometric', 'steal', 'extraction', 'membership infer',
-        'federate', 'watermark'
+        'federate', 'fair', 'interpretability', 'exlainability', 'watermark'
     ]
-    timedelta = 4
+    timedelta = 2
     today = datetime.datetime.utcnow().date()
     for keyword in keywords:
         dirname = keyword.replace(' ', '_')
@@ -38,9 +38,10 @@ def main():
         exist_files = os.listdir(dirname)
         last_day = today - datetime.timedelta(days=timedelta)
         if len(exist_files) > 0:
-            year, month, day = map(int,
-                                   exist_files[-1].split('.')[0].split('-'))
-            last_day = datetime.date(year, month, day)
+            year, month, day = map(
+                int,
+                sorted(exist_files)[-1].split('.')[0].split('-'))
+            last_day = min(last_day, datetime.date(year, month, day))
         search = arxiv.Search(query=keyword,
                               sort_by=arxiv.SortCriterion.SubmittedDate)
         for result in search.results():

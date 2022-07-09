@@ -2,6 +2,8 @@ name: Get Arxiv Papers
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "* 0/24 * * *"
 
 jobs:
   build:
