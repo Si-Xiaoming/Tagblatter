@@ -35,6 +35,11 @@ def main():
     categories = {'cs.CV', 'cs.CL', 'cs.CR', 'cs.AI', 'cs.LG'}
     timedelta = 3
     today = datetime.datetime.utcnow().date()
+    fp_readme = open('README.md', 'w')
+    fp_readme.write(f'# arxiv-daily\n')
+    fp_readme.write(f'updated on {today}\n')
+    fp_readme.write(f'| keyword | count | update_date | last_update_date |\n')
+    fp_readme.write(f'| - | - | - | - |\n')
     for keyword in keywords:
         dirname = keyword.replace(' ', '_')
         os.makedirs(dirname, exist_ok=True)
@@ -51,6 +56,7 @@ def main():
         for result in search.results():
             if result.updated.date() <= last_day:
                 print(last_day, today, keyword, cnt)
+                fp_readme.write(f'| {keyword} | {cnt} | {today} | {last_day} |\n')
                 break
             if len(set(result.categories) & categories) == 0:
                 continue
@@ -72,6 +78,7 @@ def main():
                 else:
                     fp.write(f'* Code URL: null\n')
                 fp.write(f'* Summary: {result.summary}\n\n')
+    fp_readme.close()
 
 
 if __name__ == '__main__':
