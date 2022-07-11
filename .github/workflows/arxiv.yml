@@ -3,7 +3,7 @@ name: Get Arxiv Papers
 on:
   workflow_dispatch:
   schedule:
-    - cron: "* 0/24 * * *"
+    - cron: "* 22/24 * * *"
 
 jobs:
   build:
@@ -19,12 +19,12 @@ jobs:
       - name: install dependecies
         run: |
           python -m pip install --upgrade pip
-          pip install arxiv requests
+          pip install feedparser requests
 
       - name: run script
         run: |
           git pull
-          python arxiv_daily.py
+          python rss_daily.py
       
       - name: push markdown file
         run: |

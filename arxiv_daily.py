@@ -2,8 +2,6 @@ import datetime
 import os
 import random
 import time
-from turtle import pd
-from unicodedata import category
 
 import arxiv
 import requests
@@ -33,38 +31,42 @@ def main():
         'federate', 'fair', 'interpretability', 'exlainability', 'watermark'
     ]
     categories = {'cs.CV', 'cs.CL', 'cs.CR', 'cs.AI', 'cs.LG'}
-    timedelta = 3
-    today = datetime.datetime.utcnow().date()
+    timedelta = 4
+    now = datetime.datetime.utcnow()
     fp_readme = open('README.md', 'w')
     fp_readme.write(f'# arxiv-daily\n')
-    fp_readme.write(f'updated on {today}\n')
-    fp_readme.write(f'| keyword | count | update_date | last_update_date |\n')
+    fp_readme.write(f'updated on {now}\n')
+    fp_readme.write(f'| keyword | count | update_time | last_update_time |\n')
     fp_readme.write(f'| - | - | - | - |\n')
     for keyword in keywords:
         dirname = keyword.replace(' ', '_')
         os.makedirs(dirname, exist_ok=True)
         exist_files = os.listdir(dirname)
-        last_day = today - datetime.timedelta(days=timedelta)
+        last_update_time = now - datetime.timedelta(days=timedelta)
         if len(exist_files) > 0:
-            year, month, day = map(
-                int,
-                sorted(exist_files)[-1].split('.')[0].split('-'))
-            last_day = min(last_day, datetime.date(year, month, day))
+            last_update_time = min(
+                last_update_time,
+                datetime.datetime.strptime(
+                    sorted(exist_files)[-1].split('.')[0],
+                    '%Y-%m-%d-%H-%M-%S'))
         search = arxiv.Search(query=keyword,
                               sort_by=arxiv.SortCriterion.SubmittedDate)
         cnt = 0
+        filename = None
         for result in search.results():
-            if result.updated.date() <= last_day:
-                print(last_day, today, keyword, cnt)
-                fp_readme.write(f'| {keyword} | {cnt} | {today} | {last_day} |\n')
+            update_time = result.updated.replace(tzinfo=None)
+            if update_time <= last_update_time:
+                fp_readme.write(
+                    f'| {keyword} | {cnt} | {now} | {update_time} |\n')
                 break
             if len(set(result.categories) & categories) == 0:
                 continue
             cnt += 1
-            temp_day = result.updated.date()
-            filename = os.path.join(
-                dirname,
-                f'{temp_day.year:04}-{temp_day.month:02}-{temp_day.day:02}.md')
+            if filename is None:
+                filename = os.path.join(
+                    dirname,
+                    f'{datetime.datetime.strftime(update_time,                                                   "%Y-%m-%d-%H-%M-%S")}.md'
+                )
             with open(filename, 'a+', buffering=1) as fp:
                 code_url = get_code_url(result.get_short_id())
                 fp.write(f'### Title: {result.title}\n')
