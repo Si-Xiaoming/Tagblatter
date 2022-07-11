@@ -80,7 +80,7 @@ def main():
               buffering=1) as fp:
         for keyword in keywords:
             fp.write(f'## {keyword}\n')
-            for item in keywords[keyword]:
+            for item in keywords_bin[keyword]:
                 fp.write(item)
 
 
