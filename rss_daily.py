@@ -28,6 +28,16 @@ def find_keyword(summary):
     return None
 
 
+def check_title(title):
+    words = title.split('(')[-1].split()
+    if len(words) > 2:
+        return False
+    category = words[1][1:6]
+    if category in categories:
+        return True
+    return False
+
+
 def get_code_url(short_id):
     base_url = 'https://arxiv.paperswithcode.com/api/v0/repos-and-datasets/'
     time.sleep(random.random())
@@ -49,6 +59,8 @@ def main():
             for entry in data.entries:
                 if entry.id in paper_ids:
                     continue
+                if not check_title(entry.title):
+                    continue
                 keyword = find_keyword(entry.title)
                 if keyword is None:
                     keyword = find_keyword(entry.summary)
@@ -62,6 +74,7 @@ def main():
                     item += f'* Code URL: [{code_url}]({code_url})\n'
                 else:
                     item += f'* Code URL: null\n'
+                item += f'* Copy Paste: `[[{entry.link.split("/")[-1]}] {entry.title.split(".")[0]}]({entry.link})`\n'
                 item += f'* Summary: {entry.summary}\n\n'
                 keywords_bin[keyword].append(item)
                 paper_ids.add(entry.id)
