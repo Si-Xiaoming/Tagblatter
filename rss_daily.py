@@ -15,9 +15,9 @@ headers = {
 keywords = [
     'secure', 'security', 'privacy', 'protect', 'defense', 'attack', 'robust',
     'biometric', 'steal', 'extraction', 'membership infer', 'federate', 'fair',
-    'interpretability', 'exlainability', 'watermark'
+    'interpretability', 'exlainability', 'watermark', 'diffusion'
 ]
-categories = ['cs.CV', 'cs.CL', 'cs.CR', 'cs.AI', 'cs.LG']
+categories = ['cs.CV', 'cs.CL', 'cs.CR', 'cs.LG']
 
 
 def find_keyword(summary):
