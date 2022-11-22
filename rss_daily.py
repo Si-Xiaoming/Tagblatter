@@ -74,7 +74,7 @@ def main():
                     item += f'* Code URL: [{code_url}]({code_url})\n'
                 else:
                     item += f'* Code URL: null\n'
-                item += f'* Copy Paste: `[[{entry.link.split("/")[-1]}] {entry.title.split(".")[0]}]({entry.link})`\n'
+                item += f'* Copy Paste: `<input type="checkbox">[[{entry.link.split("/")[-1]}] {entry.title.split(".")[0]}]({entry.link})`\n'
                 item += f'* Summary: {entry.summary}\n\n'
                 keywords_bin[keyword].append(item)
                 paper_ids.add(entry.id)
@@ -95,6 +95,9 @@ def main():
             fp.write(f'## {keyword}\n')
             for item in keywords_bin[keyword]:
                 fp.write(item)
+        fp.write('<script src="https://cdn.staticfile.org/clipboard.js/2.0.4/clipboard.min.js"></script>')
+        fp.write('new ClipboardJS("#copy",{text:function(trigger){var res="";var input=document.querySelectAll("input");for(var i=0;i<input.length;i++){if(input[i].type=="checkbox"&&input[i].checked){res+="- "+input[i].nextSibling.nodeValue+"\n"}}return res}}).on("success",function(e){e.clearSelection()});')
+        fp.write('<button id="copy">Copy All</button>')
 
 
 if __name__ == '__main__':
