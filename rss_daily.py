@@ -6,6 +6,8 @@ from datetime import datetime
 import feedparser
 import requests
 
+from md2html import md2html
+
 headers = {
     'User-Agent':
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.44',
@@ -88,16 +90,14 @@ def main():
         for keyword in keywords:
             fp.write(f'| {keyword} | {len(keywords_bin[keyword])} |\n')
     os.makedirs('rss/', exist_ok=True)
-    with open('rss/{}.md'.format(datetime.strftime(now, '%Y-%m-%d')),
-              'w',
-              buffering=1) as fp:
+    file = '{}.md'.format(datetime.strftime(now, '%Y-%m-%d'))
+    with open(f'rss/{file}', 'w', buffering=1) as fp:
         for keyword in keywords:
             fp.write(f'## {keyword}\n')
             for item in keywords_bin[keyword]:
                 fp.write(item)
-        fp.write('<script src="https://cdn.staticfile.org/clipboard.js/2.0.4/clipboard.min.js"></script>')
-        fp.write('new ClipboardJS("#copy",{text:function(trigger){var res="";var input=document.querySelectAll("input");for(var i=0;i<input.length;i++){if(input[i].type=="checkbox"&&input[i].checked){res+="- "+input[i].nextSibling.nodeValue+"\n"}}return res}}).on("success",function(e){e.clearSelection()});')
-        fp.write('<button id="copy">Copy All</button>')
+
+    md2html(file, 'rss', 'html')
 
 
 if __name__ == '__main__':
