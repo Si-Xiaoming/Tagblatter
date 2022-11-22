@@ -20,16 +20,19 @@ def md2html(file, in_dir, out_dir):
         )
         fp.write('<button id="copy">Copy All</button>\n')
 
-    with open('index.html', 'a+') as fp:
+    with open('index.html') as fp:
+        text = fp.read()
+
+    with open('index.html', 'w') as fp:
         fp.write(f'<div><a href="./{out_dir}/{name}.html">{name}</a></div>\n')
+        fp.write(text)
 
 
 def main():
     in_dir = 'rss'
     out_dir = 'html'
     os.makedirs(out_dir, exist_ok=True)
-    os.remove('index.html')
-    for file in sorted(os.listdir(in_dir), reverse=True):
+    for file in sorted(os.listdir(in_dir)):
         md2html(file, in_dir, out_dir)
 
 
