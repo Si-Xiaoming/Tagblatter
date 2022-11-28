@@ -17,7 +17,7 @@ headers = {
 keywords = [
     'secure', 'security', 'privacy', 'protect', 'defense', 'attack', 'robust',
     'biometric', 'steal', 'extraction', 'membership infer', 'federate', 'fair',
-    'interpretability', 'exlainability', 'watermark', 'diffusion'
+    'interpretability', 'explainability', 'watermark', 'diffusion'
 ]
 categories = ['cs.CV', 'cs.CL', 'cs.CR', 'cs.LG']
 
@@ -76,7 +76,7 @@ def main():
                     item += f'* Code URL: [{code_url}]({code_url})\n'
                 else:
                     item += f'* Code URL: null\n'
-                item += f'* Copy Paste: `<input type="checkbox">[[{entry.link.split("/")[-1]}] {entry.title.split(".")[0]}]({entry.link})`\n'
+                item += f'* Copy Paste: `<input type="checkbox">[[{entry.link.split("/")[-1]}] {entry.title.split(".")[0]}]({entry.link}) #{keyword}`\n'
                 item += f'* Summary: {entry.summary}\n\n'
                 keywords_bin[keyword].append(item)
                 paper_ids.add(entry.id)
