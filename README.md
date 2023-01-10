@@ -1,21 +1,21 @@
 # arxiv-daily
-updated on 2023-01-09 22:11:30.377833
+updated on 2023-01-10 22:12:18.046706
 | keyword | count |
 | - | - |
-| secure | 1 |
-| security | 2 |
-| privacy | 1 |
+| secure | 2 |
+| security | 1 |
+| privacy | 3 |
 | protect | 1 |
-| defense | 0 |
-| attack | 5 |
-| robust | 3 |
-| biometric | 0 |
+| defense | 2 |
+| attack | 4 |
+| robust | 12 |
+| biometric | 2 |
 | steal | 0 |
-| extraction | 3 |
+| extraction | 10 |
 | membership infer | 0 |
-| federate | 1 |
-| fair | 0 |
-| interpretability | 2 |
-| explainability | 0 |
+| federate | 2 |
+| fair | 2 |
+| interpretability | 1 |
+| explainability | 3 |
 | watermark | 0 |
-| diffusion | 0 |
+| diffusion | 2 |
