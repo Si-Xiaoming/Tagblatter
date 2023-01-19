@@ -16,7 +16,7 @@ def md2html(file, in_dir, out_dir):
             '\n<script src="https://cdn.staticfile.org/clipboard.js/2.0.4/clipboard.min.js"></script>\n'
         )
         fp.write(
-            '<script>new ClipboardJS(\"#copy\",{text:function(trigger){var res=\"\";var input=document.querySelectorAll(\"input\");for(var i=0;i<input.length;i++){if(input[i].type==\"checkbox\"&&input[i].checked){res+=\"- \"+input[i].nextSibling.nodeValue+\"\\n\"}}return res}}).on(\"success\",function(e){e.clearSelection()});</script>\n'
+            '<script>new ClipboardJS(\"#copy\",{text:function(trigger){var res=\"[[%s]]\\n\\n\";var input=document.querySelectorAll(\"input\");for(var i=0;i<input.length;i++){if(input[i].type==\"checkbox\"&&input[i].checked){res+=\"- \"+input[i].nextSibling.nodeValue+\"\\n\"}}res+=\"\\n\";return res}}).on(\"success\",function(e){e.clearSelection()});</script>\n' % name
         )
         fp.write('<button id="copy">Copy All</button>\n')
 
