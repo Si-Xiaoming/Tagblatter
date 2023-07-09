@@ -10,17 +10,17 @@ from md2html import md2html
 
 headers = {
     'User-Agent':
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.44',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67',
     'Connection': 'close'
 }
 
 keywords = [
-    'secure', 'security', 'privacy', 'protect', 'defense', 'attack', 'robust',
-    'biometric', 'steal', 'extraction', 'membership infer', 'federate', 'fair',
-    'interpretability', 'explainability', 'watermark', 'diffusion', 'noise learning',
-    'data-free', 'transformer', 'generative', 'large language model', 'segmentation'
-]
+    'pointcloud', 'railway', 'BIM', 'procedural modeling', 'segmentation', '3D point cloud', 'railway infrastructure',
+    'point cloud segmentation', 'extraction', 'Lidar', 'Infrastructure information models'
+    ]
+
 categories = ['cs.CV', 'cs.CL', 'cs.CR', 'cs.LG']
+proxies={'https':'127.0.0.1:10809'}
 
 
 def find_keyword(summary):
@@ -44,7 +44,7 @@ def check_title(title):
 def get_code_url(short_id):
     base_url = 'https://arxiv.paperswithcode.com/api/v0/repos-and-datasets/'
     time.sleep(random.random())
-    data = requests.get(base_url + short_id, headers=headers).json()
+    data = requests.get(base_url + short_id, headers=headers,proxies=proxies).json()
     if data and 'code' in data:
         if data['code'] and 'official' in data['code']:
             if data['code']['official'] and 'url' in data['code']['official']:
